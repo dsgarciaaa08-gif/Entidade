@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>A Entidade — Obra Favorita</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=IM+Fell+English:ital@0;1&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --preto:     #080608;
+      --grafite:   #111012;
+      --vinho:     #6B0F1A;
+      --ferrugem:  #9B2915;
+      --ambar:     #C8882A;
+      --creme:     #D9C9A8;
+      --cinza:     #5A555E;
+      --branco:    #EDE8E0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--preto);
+      color: var(--branco);
+      font-family: 'IM Fell English', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    /* ── RUÍDO DE FUNDO ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ── NAVEGAÇÃO ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      padding: 1rem 2rem;
+      background: linear-gradient(to bottom, rgba(8,6,8,0.97), transparent);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    nav a {
+      color: var(--cinza);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    nav a:hover { color: var(--ambar); }
+
+    /* ── CAPA / HERO ── */
+    #capa {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      overflow: hidden;
+    }
+
+    /* grade de filme */
+    #capa::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(255,255,255,0.015) 60px, rgba(255,255,255,0.015) 61px);
+      pointer-events: none;
+    }
+
+    /* vinheta vermelha */
+    #capa::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 70% at 50% 50%, transparent 30%, rgba(107,15,26,0.55) 80%, rgba(8,6,8,0.98) 100%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      position: relative;
+      z-index: 1;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      color: var(--ferrugem);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      position: relative;
+      z-index: 1;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(3.5rem, 10vw, 8rem);
+      font-weight: 900;
+      line-height: 0.95;
+      color: var(--branco);
+      text-shadow:
+        0 0 80px rgba(107,15,26,0.8),
+        0 0 200px rgba(107,15,26,0.4);
+      letter-spacing: 0.04em;
+    }
+
+    .hero-title span {
+      display: block;
+      font-size: 0.42em;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      color: var(--ambar);
+      margin-top: 0.6rem;
+      text-shadow: 0 0 30px rgba(200,136,42,0.6);
+    }
+
+    .hero-tagline {
+      position: relative;
+      z-index: 1;
+      margin-top: 2.5rem;
+      font-style: italic;
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
+      color: var(--creme);
+      max-width: 560px;
+      opacity: 0.85;
+    }
+
+    .hero-meta {
+      position: relative;
+      z-index: 1;
+      margin-top: 2.5rem;
+      display: flex;
+      gap: 2rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: var(--cinza);
+      text-transform: uppercase;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--cinza);
+      text-transform: uppercase;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    .scroll-hint::after {
+      content: '';
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--ferrugem), transparent);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50%       { opacity: 1; }
+    }
+
+    /* ── SEÇÕES ── */
+    section {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ferrugem);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--vinho), transparent);
+    }
+
+    h2 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700;
+      color: var(--branco);
+      margin-bottom: 2rem;
+      line-height: 1.2;
+    }
+
+    p { margin-bottom: 1.2rem; color: var(--creme); }
+    p:last-child { margin-bottom: 0; }
+
+    em { color: var(--ambar); font-style: italic; }
+
+    /* ── DIVISOR ── */
+    .divisor {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 1rem 0;
+      color: var(--vinho);
+      font-size: 1.2rem;
+      letter-spacing: 1rem;
+      opacity: 0.5;
+    }
+
+    /* ── TEMAS ── */
+    .temas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .tema-card {
+      border: 1px solid rgba(107,15,26,0.4);
+      padding: 1.8rem 1.5rem;
+      background: rgba(17,16,18,0.6);
+      position: relative;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .tema-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--ferrugem), transparent);
+    }
+
+    .tema-card:hover {
+      border-color: var(--ferrugem);
+      background: rgba(107,15,26,0.08);
+    }
+
+    .tema-icon {
+      font-size: 1.6rem;
+      margin-bottom: 0.8rem;
+      display: block;
+    }
+
+    .tema-titulo {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ambar);
+      margin-bottom: 0.6rem;
+      letter-spacing: 0.05em;
+    }
+
+    .tema-card p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin: 0;
+      color: var(--cinza);
+    }
+
+    /* ── SOBRE O CRIADOR ── */
+    .criador-box {
+      border-top: 1px solid rgba(107,15,26,0.3);
+      border-bottom: 1px solid rgba(107,15,26,0.3);
+      padding: 2.5rem 0;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .criador-inicial {
+      font-family: 'Cinzel', serif;
+      font-size: 5rem;
+      font-weight: 900;
+      color: var(--vinho);
+      line-height: 1;
+      opacity: 0.5;
+    }
+
+    /* ── OPINIÃO ── */
+    .opiniao-destaque {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      color: var(--branco);
+      line-height: 1.5;
+      border-left: 3px solid var(--ferrugem);
+      padding-left: 1.8rem;
+      margin: 2.5rem 0;
+    }
+
+    .nota {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.3rem;
+      font-family: 'Cinzel', serif;
+      margin-top: 2rem;
+    }
+
+    .nota-num {
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: var(--ambar);
+      line-height: 1;
+    }
+
+    .nota-den {
+      font-size: 1.2rem;
+      color: var(--cinza);
+    }
+
+    .nota-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--cinza);
+      margin-left: 0.8rem;
+    }
+
+    /* ── RODAPÉ ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 3rem 2rem 4rem;
+      border-top: 1px solid rgba(107,15,26,0.25);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cinza);
+      opacity: 0.6;
+    }
+
+    /* ── RESPONSIVO ── */
+    @media (max-width: 600px) {
+      nav { gap: 1.2rem; font-size: 0.65rem; }
+      .criador-box { grid-template-columns: 1fr; }
+      .criador-inicial { font-size: 3rem; }
+      .hero-meta { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+    }
+
+    /* ── ANIMAÇÕES DE ENTRADA ── */
+    @media (prefers-reduced-motion: no-preference) {
+      .fade-in {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+      }
+      .fade-in.visible {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#sinopse">Sinopse</a>
+    <a href="#criador">Criador</a>
+    <a href="#temas">Temas</a>
+    <a href="#opiniao">Opinião</a>
+  </nav>
+
+  <!-- CAPA -->
+  <section id="capa">
+    <p class="hero-eyebrow">Trabalho de Português · Obra Favorita · Filme · 2012</p>
+    <h1 class="hero-title">
+      A Entidade
+      <span>Sinister</span>
+    </h1>
+    <p class="hero-tagline">
+      "Algumas verdades são tão sombrias que não devemos procurá-las — porque elas podem nos encontrar primeiro."
+    </p>
+    <div class="hero-meta">
+      <span>Direção: Scott Derrickson</span>
+      <span>Roteiro: C. Robert Cargill</span>
+      <span>Terror · 110 min</span>
+    </div>
+    <div class="scroll-hint">Role para baixo</div>
+  </section>
+
+  <div class="divisor" aria-hidden="true">✦ ✦ ✦</div>
+
+  <!-- SINOPSE -->
+  <section id="sinopse" class="fade-in">
+    <div class="section-label">01 — Sinopse</div>
+    <h2>A Caixa que Não Deveria Ser Aberta</h2>
+    <p>
+      Ellison Oswalt (Ethan Hawke) é um escritor de crimes reais que já foi famoso, mas que há mais de uma década não consegue repetir o sucesso de seu único grande livro. Desesperado por um novo caso que o relance ao topo, ele toma uma decisão extrema: muda sua família inteira para a casa onde, no quintal, uma família foi enforcada — e a filha mais nova desapareceu sem deixar rastros.
+    </p>
+    <p>
+      No sótão da nova casa, Ellison encontra uma caixa de sapatos escondida. Dentro dela: bobinas de filme Super 8, rotuladas com nomes inocentes como <em>"Noite de Churrasco em Família"</em> ou <em>"Férias na Piscina"</em>. Mas ao assistir às imagens, ele descobre que os filmes são registros de assassinatos em massa — cometidos contra famílias inteiras, ao longo de décadas, em diferentes partes do país.
+    </p>
+    <p>
+      Obcecado com o mistério e com a ambição de escrever o maior livro de sua carreira, Ellison ignora os sinais de alerta — as noites perturbadas dos filhos, as sombras que surgem no escuro, o estranho símbolo que aparece repetidamente em cada bobina. Enquanto investiga, algo começa a investigá-lo de volta.
+    </p>
+  </section>
+
+  <div class="divisor" aria-hidden="true">✦</div>
+
+  <!-- CRIADOR -->
+  <section id="criador" class="fade-in">
+    <div class="section-label">02 — Sobre os Criadores</div>
+    <h2>A Mente por Trás do Horror</h2>
+    <div class="criador-box">
+      <div class="criador-inicial" aria-hidden="true">SD</div>
+      <div>
+        <p>
+          <em>Scott Derrickson</em> é um cineasta americano nascido em 1966, em Denver, Colorado. Formado em Cinema e Filosofia — uma combinação que explica muito de seu trabalho —, ele se especializou em terror sobrenatural com profundidade temática. Antes de <em>A Entidade</em>, assinou <em>O Exorcismo de Emily Rose</em> (2005), que já combinava horror com questionamentos filosóficos e religiosos.
+        </p>
+        <p>
+          O roteiro foi escrito em parceria com <em>C. Robert Cargill</em>, crítico de cinema e escritor que havia sonhado com o conceito do filme após assistir ao <em>O Chamado</em> (2002): e se alguém comprasse uma casa assombrada sem saber, e descobrisse isso da pior forma possível? Essa pergunta gerou um dos roteiros de terror mais eficientes da última década.
+        </p>
+        <p>
+          Juntos, Derrickson e Cargill criaram um filme que vai além do susto fácil — usaram a mitologia do demônio Bughuul para explorar temas de ambição, culpa e o preço que pagamos pela obsessão. Derrickson também viria a dirigir <em>Doutor Estranho</em> (2016) para a Marvel, mas o terror é onde sua voz criativa é mais pessoal.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divisor" aria-hidden="true">✦</div>
+
+  <!-- TEMAS -->
+  <section id="temas" class="fade-in">
+    <div class="section-label">03 — Temas Principais</div>
+    <h2>O Que o Filme Realmente Discute</h2>
+    <div class="temas-grid">
+      <div class="tema-card">
+        <span class="tema-icon">🔥</span>
+        <div class="tema-titulo">Ambição e Autodestruição</div>
+        <p>Ellison sabe que a casa é perigosa, mas permanece nela. O filme questiona até onde uma pessoa vai por fama e reconhecimento — mesmo quando a família paga o preço.</p>
+      </div>
+      <div class="tema-card">
+        <span class="tema-icon">👁</span>
+        <div class="tema-titulo">O Mal que Observa</div>
+        <p>Bughuul não ataca diretamente — ele seduz, fascina e corrói de dentro. O horror do filme é psicológico antes de ser sobrenatural: a ameaça cresce no quanto você a estuda.</p>
+      </div>
+      <div class="tema-card">
+        <span class="tema-icon">📽</span>
+        <div class="tema-titulo">A Imagem como Perigo</div>
+        <p>As bobinas Super 8 são o vetor do mal. O filme reflete sobre como certos conteúdos nos contaminam — e como a curiosidade de "ver mais" pode ser uma armadilha fatal.</p>
+      </div>
+      <div class="tema-card">
+        <span class="tema-icon">🏠</span>
+        <div class="tema-titulo">Família em Risco</div>
+        <p>A tensão entre as necessidades do pai e a segurança dos filhos é o coração emocional da história. O lar, que deveria ser refúgio, torna-se o palco do perigo.</p>
+      </div>
+      <div class="tema-card">
+        <span class="tema-icon">🌑</span>
+        <div class="tema-titulo">Mitologia e Folclore</div>
+        <p>Bughuul é um deus pagão que devora almas de crianças. O filme constrói uma mitologia consistente e sinistra em torno de rituais, símbolos e gerações de vítimas.</p>
+      </div>
+      <div class="tema-card">
+        <span class="tema-icon">📖</span>
+        <div class="tema-titulo">Verdade vs. Negação</div>
+        <p>Ellison recebe avisos claros — e os ignora. O filme é também um estudo sobre como as pessoas mentem para si mesmas quando a verdade ameaça seus planos.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divisor" aria-hidden="true">✦</div>
+
+  <!-- OPINIÃO -->
+  <section id="opiniao" class="fade-in">
+    <div class="section-label">04 — Minha Opinião</div>
+    <h2>Por Que Este Filme Me Marcou</h2>
+
+    <div class="opiniao-destaque">
+      "A Entidade" não é o tipo de filme que você esquece. Ele fica — como uma sombra que você continua vendo no canto do olho depois que a tela apaga.
+    </div>
+
+    <p>
+      O que me conquistou desde o início foi a inteligência do roteiro. Muitos filmes de terror dependem de sustos baratos, músicas altas e personagens que tomam decisões idiotas só para avançar a trama. <em>A Entidade</em> faz o oposto: Ellison é um personagem complexo, cujas escolhas ruins fazem sentido emocional. Entendemos por que ele fica na casa. Isso torna o horror muito mais perturbador.
+    </p>
+    <p>
+      A direção de Scott Derrickson é precisa e sóbria. Ele resiste à tentação de mostrar demais — e esse controle é o que faz o filme funcionar. A trilha sonora de Christopher Young é uma das mais perturbadoras que já ouvi num filme de terror: sons industriais, dissonâncias e silêncios calculados que deixam a atmosfera pesada do começo ao fim.
+    </p>
+    <p>
+      Ethan Hawke entrega uma atuação genuinamente boa num gênero que normalmente não atrai atores de seu calibre. Você sente o peso da ambição dele, o medo que ele tenta esconder, o amor pela família que compete com o ego. É uma performance que eleva o filme inteiro.
+    </p>
+    <p>
+      O que <em>A Entidade</em> fez por mim foi mostrar que terror pode ser cinema de verdade — com temas, personagens e algo a dizer sobre o ser humano. Não é apenas um filme para assistir com amigos e dar gritinhos. É um filme para pensar depois. Recomendo a qualquer pessoa que queira ser assustada de forma inteligente.
+    </p>
+
+    <div class="nota">
+      <span class="nota-num">9</span>
+      <span class="nota-den">/ 10</span>
+      <span class="nota-label">— Minha nota</span>
+    </div>
+  </section>
+
+  <footer>
+    <p>Trabalho de Português &nbsp;·&nbsp; A Entidade (Sinister, 2012) &nbsp;·&nbsp; Direção: Scott Derrickson</p>
+  </footer>
+
+  <script>
+    // Animação de entrada ao rolar
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
